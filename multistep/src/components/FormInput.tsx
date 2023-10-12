@@ -1,6 +1,5 @@
-
+import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box"
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { Controller, useFormContext } from "react-hook-form";
@@ -19,9 +18,7 @@ type FormInputProps = {
 
 
 export const FormInput = ({ name, label, type }: FormInputProps) => {
-    
     const { control } = useFormContext();
-    
 
     return (
         <Controller
@@ -62,9 +59,9 @@ export const FormInput = ({ name, label, type }: FormInputProps) => {
                            aria-labelledby="demo-row-radio-buttons-group-label"
                            name="row-radio-buttons-group"
                            >
-                           <FormControlLabel value="avião" control={<Radio />} label="Avião" />
-                           <FormControlLabel value="ônibus" control={<Radio />} label="Ônibus" />
-                           <FormControlLabel value="carro" control={<Radio />} label="Carro" />
+                                <FormControlLabel value="avião" control={<Radio />} label="Avião" />
+                                <FormControlLabel value="ônibus" control={<Radio />} label="Ônibus" />
+                                <FormControlLabel value="carro" control={<Radio />} label="Carro" />
 
                            </RadioGroup>
                        </FormControl>
