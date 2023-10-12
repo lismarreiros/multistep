@@ -16,7 +16,7 @@ const schema = z.object({
     dataIda: z.coerce.date(),
     dataVolta: z.coerce.date(),
 
-    valorTrans: z.coerce.number(),
+    valorTrans: z.coerce.number().min(1),
 
     nomeHotel: z.string().min(1),
     valorHotel: z.coerce.number(),
