@@ -9,6 +9,7 @@ import { Transporte } from "./stepcomponents/Transporte";
 import { Hospedagem } from "./stepcomponents/Hospedagem";
 import { Adiantamento } from "./stepcomponents/Adiantamento";
 import { Steps } from "./Stepper";
+import { useState } from 'react';
 
 const schema = z.object({
     cidade: z.string()
@@ -16,7 +17,9 @@ const schema = z.object({
     dataIda: z.coerce.date(),
     dataVolta: z.coerce.date(),
 
+    category: z.string(),
     valorTrans: z.coerce.number().min(1),
+
 
     nomeHotel: z.string().min(1),
     valorHotel: z.coerce.number(),
@@ -36,7 +39,7 @@ const sourceSteps = [
     },
     {
         label: "Transporte",
-        fields: ["valorTrans"],
+        fields: ["valorTrans", "category"],
         Component: <Transporte />,
         hasError: false,
     },
@@ -64,6 +67,7 @@ const getSteps = (errors: string[]) => {
 };
 
 export function Form() {
+    const [output, setOutput] = useState('')
     const methods = useForm<FormValues>({
         resolver: zodResolver(schema),
         criteriaMode: "all",
@@ -72,6 +76,7 @@ export function Form() {
             cidade: "",
             dataIda: undefined,
             dataVolta: undefined,
+            category: undefined,
             valorTrans: 0,
             nomeHotel: "",
             valorHotel: 0,
@@ -92,12 +97,18 @@ export function Form() {
     }
 
     const steps = getSteps(Object.keys(methods.formState.errors));
- 
+
+    function createUser(data:any) {
+        setOutput(JSON.stringify(data, null, 2))
+    }
+
+
     return( 
         <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit((data) => console.log(data))}>
+            <form onSubmit={methods.handleSubmit(createUser)}>
                 <Steps items={steps} />
             </form>
+            <pre>{output}</pre>
         </FormProvider>
     );
 }
