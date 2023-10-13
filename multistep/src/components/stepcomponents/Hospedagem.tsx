@@ -7,6 +7,7 @@ export const Hospedagem = () => {
             <Box display="flex" flexDirection="column" gap={2} marginTop={3}>
                 <FormInput type="text" name="nomeHotel" label="Nome do Hotel" />
                 <FormInput type="value" name="valorHotel" label="Valor"/>
+                <FormInput type="image" name="imageHotel" label="Anexo" />
             </Box>
         </Box>
     );

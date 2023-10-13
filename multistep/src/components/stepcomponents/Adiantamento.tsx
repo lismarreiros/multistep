@@ -7,6 +7,7 @@ export const Adiantamento = () => {
             <Box display="flex" flexDirection="column" gap={2} marginTop={3}>
                 <FormInput type="date" name="dataAdia" label="Data" />
                 <FormInput type="value" name="valorAdia" label="Valor"/>
+                <FormInput type="image" name="imageAdia" label="Anexo" />
             </Box>
         </Box>
     );

@@ -12,20 +12,80 @@ import { Steps } from "./Stepper";
 import { useState } from 'react';
 
 const schema = z.object({
-    cidade: z.string()
-    .min(1),
-    dataIda: z.coerce.date(),
-    dataVolta: z.coerce.date(),
+    cidade: z.string().min(1, 'Informe pelo menos uma cidade')
+    .max(100)
+    .transform(cidade => {
+        return cidade.trim().split('').map(word => {
+            return word[0].toLocaleUpperCase().concat(word.substring(1))
+        }).join(' ')
 
-    category: z.string(),
-    valorTrans: z.coerce.number().min(1),
+    }),
 
+    dataIda: z.coerce.date({
+        errorMap: () => {
+            return {
+                message: 'Selecione uma data de ida'
+            }
+        }
+    }),
+    dataVolta: z.coerce.date({
+        errorMap: () => {
+            return {
+                message: 'Selecione uma data de volta'
+            }
+        }
+    }), 
+   
+    category: z.string({   
+        errorMap: () => {
+            return {
+                message: 'Selecione uma opção.'
+            }
+        }
+    }),
 
-    nomeHotel: z.string().min(1),
-    valorHotel: z.coerce.number(),
+    valorTrans: z.coerce.number({
+        errorMap: () => {
+            return {
+                message: 'Informe  um valor.'
+            }
+        }
+    })
+    .positive({message:'Digite um número válido'}),
 
-    valorAdia: z.coerce.number(),
-    dataAdia: z.coerce.date(),
+    imageTrans: z.instanceof(FileList).transform(list => list.item(0)),
+
+    nomeHotel: z.string().min(1, {message: 'Informe um nome'}),
+
+    valorHotel: z.coerce.number({
+        errorMap: () => {
+            return {
+                message: 'Informe  um valor.'
+            }
+        }
+    }),
+
+    imageHotel: z.instanceof(FileList).transform(list => list.item(0))
+    .optional(),
+
+    valorAdia: z.coerce.number({
+        errorMap: () => {
+            return {
+                message: 'Informe  um valor.'
+            }
+        }
+    }),
+    dataAdia: z.coerce.date({
+        errorMap: () => {
+            return {
+                message: 'Selecione uma data.'
+            }
+        }
+    }),
+
+    imageAdia: z.instanceof(FileList).transform(list => list.item(0))
+    .optional(),
+
 }).required();
 
 type FormValues =  z.infer<typeof schema>;
@@ -39,19 +99,19 @@ const sourceSteps = [
     },
     {
         label: "Transporte",
-        fields: ["valorTrans", "category"],
+        fields: ["valorTrans", "category", "imageTrans"],
         Component: <Transporte />,
         hasError: false,
     },
     {
         label: "Hospedagem",
-        fields: ["nomeHotel", "valorHotel"],
+        fields: ["nomeHotel", "valorHotel", "imageHotel"],
         Component: <Hospedagem />,
         hasError: false,
     },
     {
         label:"Adiantamento",
-        fields: ["valorAdia", "dataAdia"],
+        fields: ["valorAdia", "dataAdia", "imageAdia"],
         Component: <Adiantamento />,
         hasError: false,
     },
@@ -77,10 +137,10 @@ export function Form() {
             dataIda: undefined,
             dataVolta: undefined,
             category: undefined,
-            valorTrans: 0,
+            valorTrans: undefined,
             nomeHotel: "",
-            valorHotel: 0,
-            valorAdia: 0,
+            valorHotel: undefined,
+            valorAdia: undefined,
             dataAdia: undefined,
         },
     });
