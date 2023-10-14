@@ -17,10 +17,10 @@ type FormInputProps = {
     name: string;
     label: string;
     type: 'text' | 'date' | 'value' | 'category' | 'image';
+    onChangeUploadImage?: (event: React.ChangeEvent<HTMLInputElement>) => void
 };
 
-
-export const FormInput = ({ name, label, type }: FormInputProps) => {
+export const FormInput = ({ name, label, type, onChangeUploadImage }: FormInputProps) => {
     
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
@@ -93,7 +93,7 @@ export const FormInput = ({ name, label, type }: FormInputProps) => {
                     {type === 'image' && (
                         <Button sx={{ width: 230, height: 50}} size="medium" component="label" variant="contained">
                             Upload File
-                        <VisuallyHiddenInput type="file"/>
+                        <VisuallyHiddenInput type="file" onChange={onChangeUploadImage}/>
                         </Button>
                     )}
                 </Box>
