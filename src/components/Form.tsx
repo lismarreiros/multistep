@@ -1,5 +1,5 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import Box from '@mui/material/Box';
+import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@mui/material/Button";
 import { Typography } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
@@ -9,20 +9,83 @@ import { Transporte } from "./stepcomponents/Transporte";
 import { Hospedagem } from "./stepcomponents/Hospedagem";
 import { Adiantamento } from "./stepcomponents/Adiantamento";
 import { Steps } from "./Stepper";
+import { useState } from 'react';
 
 const schema = z.object({
-    cidade: z.string()
-    .min(1),
-    dataIda: z.coerce.date(),
-    dataVolta: z.coerce.date(),
+    cidade: z.string().min(1, 'Informe pelo menos uma cidade')
+    .max(100)
+    .transform(cidade => {
+        return cidade.trim().split('').map(word => {
+            return word[0].toLocaleUpperCase().concat(word.substring(1))
+        }).join(' ')
 
-    valorTrans: z.coerce.number(),
+    }),
 
-    nomeHotel: z.string().min(1),
-    valorHotel: z.coerce.number(),
+    dataIda: z.coerce.date({
+        errorMap: () => {
+            return {
+                message: 'Selecione uma data de ida'
+            }
+        }
+    }),
+    dataVolta: z.coerce.date({
+        errorMap: () => {
+            return {
+                message: 'Selecione uma data de volta'
+            }
+        }
+    }), 
+   
+    category: z.string({   
+        errorMap: () => {
+            return {
+                message: 'Selecione uma opção.'
+            }
+        }
+    }),
 
-    valorAdia: z.coerce.number(),
-    dataAdia: z.coerce.date(),
+    valorTrans: z.coerce.number({
+        errorMap: () => {
+            return {
+                message: 'Informe  um valor.'
+            }
+        }
+    })
+    .positive({message:'Digite um número válido'}),
+
+    imageTrans: z.instanceof(FileList).transform(list => list.item(0)),
+
+    nomeHotel: z.string().min(1, {message: 'Informe um nome'}),
+
+    valorHotel: z.coerce.number({
+        errorMap: () => {
+            return {
+                message: 'Informe  um valor.'
+            }
+        }
+    }),
+
+    imageHotel: z.instanceof(FileList).transform(list => list.item(0))
+    .optional(),
+
+    valorAdia: z.coerce.number({
+        errorMap: () => {
+            return {
+                message: 'Informe  um valor.'
+            }
+        }
+    }),
+    dataAdia: z.coerce.date({
+        errorMap: () => {
+            return {
+                message: 'Selecione uma data.'
+            }
+        }
+    }),
+
+    imageAdia: z.instanceof(FileList).transform(list => list.item(0))
+    .optional(),
+
 }).required();
 
 type FormValues =  z.infer<typeof schema>;
@@ -36,19 +99,19 @@ const sourceSteps = [
     },
     {
         label: "Transporte",
-        fields: ["valorTrans"],
+        fields: ["valorTrans", "category", "imageTrans"],
         Component: <Transporte />,
         hasError: false,
     },
     {
         label: "Hospedagem",
-        fields: ["nomeHotel", "valorHotel"],
+        fields: ["nomeHotel", "valorHotel", "imageHotel"],
         Component: <Hospedagem />,
         hasError: false,
     },
     {
         label:"Adiantamento",
-        fields: ["valorAdia", "dataAdia"],
+        fields: ["valorAdia", "dataAdia", "imageAdia"],
         Component: <Adiantamento />,
         hasError: false,
     },
@@ -64,6 +127,7 @@ const getSteps = (errors: string[]) => {
 };
 
 export function Form() {
+    const [output, setOutput] = useState('')
     const methods = useForm<FormValues>({
         resolver: zodResolver(schema),
         criteriaMode: "all",
@@ -72,10 +136,11 @@ export function Form() {
             cidade: "",
             dataIda: undefined,
             dataVolta: undefined,
-            valorTrans: 0,
+            category: undefined,
+            valorTrans: undefined,
             nomeHotel: "",
-            valorHotel: 0,
-            valorAdia: 0,
+            valorHotel: undefined,
+            valorAdia: undefined,
             dataAdia: undefined,
         },
     });
@@ -92,12 +157,18 @@ export function Form() {
     }
 
     const steps = getSteps(Object.keys(methods.formState.errors));
- 
+
+    function createUser(data:any) {
+        setOutput(JSON.stringify(data, null, 2))
+    }
+
+
     return( 
         <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit((data) => console.log(data))}>
+            <form onSubmit={methods.handleSubmit(createUser)}>
                 <Steps items={steps} />
             </form>
+            <pre>{output}</pre>
         </FormProvider>
     );
 }
