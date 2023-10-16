@@ -84,7 +84,9 @@ export function Steps({ items }: StepProps) {
                     {isLastStep ? (
                         <Button 
                         key="enviar" 
-                        type="submit">
+                        type="submit"
+                        sx={{width: '167px', height: '60px', backgroundColor: "#0065FF", color: 'white'}}
+                        >
                             Enviar
                         </Button>
                     ) : (
